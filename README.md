@@ -50,6 +50,13 @@ The following edge cases are under investigation:
 
 This version handles one-time payments. Recurring subscriptions are a possible future addition.
 
+## Related community requests
+
+- [Crocoblock/jetformbuilder#119](https://github.com/Crocoblock/jetformbuilder/issues/119): submit a form, pay through Razorpay, and record the payment in the backend.
+- [Crocoblock/suggestions#6129](https://github.com/Crocoblock/suggestions/issues/6129): add Razorpay to JetFormBuilder for payments in India.
+
+This plugin provides an independent implementation of the requested integration.
+
 ## Development
 
 The repository includes the plugin source, bundled Razorpay SDK and syntax-check workflow. See [contributing](CONTRIBUTING.md) for bug reports and changes, and [security reporting](SECURITY.md) for sensitive findings.
