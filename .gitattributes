@@ -1,0 +1,4 @@
+/vendor/** linguist-vendored
+*.md text eol=lf
+*.php text eol=lf
+*.js text eol=lf

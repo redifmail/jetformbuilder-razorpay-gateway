@@ -1,0 +1,17 @@
+# Local tooling and secrets
+.env
+.env.*
+!.env.example
+*.log
+debug.log
+wp-config.php
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+node_modules/
+.phpunit.result.cache
+.phpunit-watcher.yml
+coverage/
+build/
+dist/
