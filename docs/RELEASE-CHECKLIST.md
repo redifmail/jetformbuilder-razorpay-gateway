@@ -1,19 +1,15 @@
-# Public release checklist
+# Preparing a release
 
-This source is an **unreleased review candidate**, preserved from the original plugin v0.3.0.
+For each version:
 
-- [x] Inventory complete; original source preserved
-- [x] PHP syntax check passed locally on PHP 8.4
-- [x] Three JavaScript syntax checks passed locally on Node 22
-- [x] Bundled Razorpay PHP SDK version identified as 2.9.3
-- [x] No literal Razorpay live/test credentials found by an initial pattern scan
-- [ ] Resolve payment lifecycle and concurrency review findings
-- [ ] Review payment amount source, legacy form migration and cancellation policy
-- [ ] Test on current JetFormBuilder version and all declared PHP versions
-- [ ] Complete Razorpay Test Mode happy and failure paths
-- [ ] Obtain independent review of payment security and privacy/data minimization
-- [ ] Confirm third-party source/provenance and copyright for all originally authored files
-- [ ] Select and add explicit license for original plugin code
-- [ ] Add successful integration test evidence and update compatibility table
-- [ ] Publish repository only after release blockers are addressed
-- [ ] Tag first release only after a clean staging installation passes
+- Summarise the problem addressed, the change made and any known issues.
+- Run the PHP and JavaScript syntax checks.
+- Check checkout and paid actions with the relevant JetFormBuilder and PHP versions.
+- Exercise callback timing, duplicate notifications and payment recovery when those paths change.
+- Keep credentials and customer data out of examples and downloads.
+- Retain the bundled dependency licenses.
+- Tag the matching source and provide release notes.
+
+## Current follow-up work
+
+The maintainer reports successful live-payment testing. Further work covers the callback and verification findings listed in the README, a wider compatibility test matrix, and choosing a license for the project's own code.

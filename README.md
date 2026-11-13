@@ -1,71 +1,59 @@
 # JetFormBuilder Razorpay Gateway
 
-> **Pre-release source snapshot, not production-approved.** This repository candidate preserves the supplied v0.3.0 implementation. Payment-lifecycle security review and Razorpay Test Mode integration tests are still outstanding. No stable release or compatibility certification is implied.
+Accept one-time Razorpay payments directly from JetFormBuilder forms.
 
+Built by [MK Designs](https://www.mkdeesigns.com).
 
-Author: MK Designs  
-Website: https://www.mkdeesigns.com
+## Why we built it
 
-Razorpay payment gateway integration for JetFormBuilder form payments such as event registration, donations, application fees, booking fees, and similar one-time form submissions.
+A registration, donation or booking form often needs a payment step as part of the submission. We built this integration to connect Razorpay checkout with JetFormBuilder's payment records and post-payment actions, keeping the form and payment workflow together.
 
-## Previously reported compatibility
+The plugin opens Razorpay checkout, checks the returned payment against the saved order, and passes the result back to JetFormBuilder. Webhooks and an admin reconciliation tool help follow up on payments when the browser return is interrupted.
 
-The existing documentation names JetFormBuilder **3.6.4.1** and declares **PHP 7.4+**. These are historical project claims, **not independently reproduced integration tests in this review**. PHP syntax passed locally on PHP 8.4; current JetFormBuilder 3.6.8 requires new testing. See [test matrix](docs/TEST-MATRIX.md) and [release checklist](docs/RELEASE-CHECKLIST.md).
+## What it does
 
-The browser-return, webhook recovery, and admin reconciliation recovery paths use JetFormBuilder's gateway module API. Recheck these paths after major JetFormBuilder gateway-module changes.
+- Adds Razorpay as a payment gateway in JetFormBuilder.
+- Connects successful payments to the form's configured paid actions.
+- Checks order ID, payment status, amount and currency during browser-return verification.
+- Shows Razorpay transaction details inside the JetFormBuilder payment record.
+- Saves details received through browser returns, webhooks and reconciliation.
+- Uses JetFormBuilder's server-side amount resolver when **Secure payment amount** is enabled.
 
-## Secure payment amount
+## Getting started
 
-JetFormBuilder 3.6.4.1 adds the **Secure payment amount** form setting. This plugin uses JetFormBuilder's server-side trusted price resolver automatically when that setting is enabled.
+1. Install and activate JetFormBuilder and this plugin.
+2. Add your Razorpay credentials in the gateway settings.
+3. Select Razorpay in your form's gateway settings and choose the amount field.
+4. Enable **Secure payment amount** and use a supported, server-verifiable amount source.
+5. Add **Save Form Record** and place the actions that depend on payment under the gateway success event.
+6. Check the checkout, payment record and resulting actions with your form configuration. Razorpay Test Mode is useful when trying changes.
 
-For every existing Razorpay form:
+Existing forms keep their own settings, so check **Secure payment amount** on each payment form.
 
-1. Open the form editor.
-2. Open **Gateways Settings**.
-3. Enable **Secure payment amount**.
-4. Use a supported amount source, such as a numeric Calculated Field, a non-rendered trusted Hidden Field, or Select/Radio/Checkbox options with calculate values.
-5. Test successful, cancelled, and failed payments in Razorpay Test Mode before deploying to production.
+## What's new in 0.3.0
 
-Do not automatically enable this setting in the database. JetFormBuilder intentionally leaves it disabled on existing forms because unsupported client-controlled amount fields will be rejected once protection is enabled.
+This update focuses on matching the payment returned by Razorpay to the order stored in JetFormBuilder. Amount or currency mismatches are recorded as `AMOUNT_MISMATCH`. It also fixes a missing `Gateway_Context` import and updates the integration to JetFormBuilder's `JFB_Modules` namespaces.
 
-## Scope
+Version 0.2.9 added the Razorpay details panel, bringing transaction information into the payment record for easier troubleshooting.
 
-This plugin does not add WooCommerce order logic, cart logic, subscriptions, refund UI, manual capture workflows, or a separate commerce dashboard. It stays within JetFormBuilder payment records and gateway success/failure actions.
+See the [changelog](CHANGELOG.md) for version history and [releases](https://github.com/redifmail/jetformbuilder-razorpay-gateway/releases) for tagged downloads.
 
-## v0.3.0
+## Testing and issues being checked
 
-- Tested with JetFormBuilder 3.6.4.1 and its Secure payment amount feature.
-- Keeps using JetFormBuilder's server-side amount resolver through the gateway base class.
-- Verifies the fetched Razorpay payment order ID, status, amount, and currency against the stored JetFormBuilder payment row before browser-return completion.
-- Records an `AMOUNT_MISMATCH` payment status when the fetched amount or currency does not match.
-- Fixes the missing `Gateway_Context` import in the browser-return verification path.
-- Migrates gateway integrations from JetFormBuilder's deprecated namespace aliases to the current `JFB_Modules` namespaces.
+The maintainer reports successful live-payment testing. The documented development baseline is JetFormBuilder 3.6.4.1, with PHP 7.4+ declared by the plugin.
 
-## v0.2.9
+A separate code review identified a few edge cases to investigate:
 
-- Adds a Razorpay-only admin panel on the JetFormBuilder single payment screen.
-- The panel shows saved Razorpay transaction data such as Payment ID, Order ID, status, method, UPI VPA, Bank RRN, Razorpay fee, tax, completion source, and webhook event when available.
-- Extra Razorpay payment details are saved from browser-return, webhook, and admin reconciliation completion paths.
-- This does not change the payment flow and does not add WooCommerce/order/cart logic.
+- Browser returns and webhooks arriving together may run paid actions more than once.
+- A browser failure callback may close a pending record before a later payment confirmation arrives.
+- Missing amount or currency values, and forms using different credential sets, need additional checks.
 
-## Community testing checklist
+These are code-review findings, not failures reported from the maintainer's live tests. The [test matrix](docs/TEST-MATRIX.md) tracks the scenarios to reproduce and verify.
 
-Before testing on a live site, install this on a staging site first. Add Razorpay test credentials in JetFormBuilder payment gateway settings, create a JetFormBuilder form with Razorpay selected as the payment gateway, select an amount field, add Save Form Record, and place paid actions under the gateway success event.
+This version handles one-time payments. Recurring subscriptions are a possible future addition.
 
-Recommended tests:
+## Development
 
-- AJAX form payment success.
-- Non-AJAX or reload-based form payment success.
-- Failed or cancelled checkout.
-- Tampered submitted amount with Secure payment amount enabled.
-- Payer field mapping and shipping field mapping.
-- Optional Razorpay webhook recovery using `payment.captured` and `payment.authorized`.
-- Admin reconciliation for old `CREATED` payment records.
+The repository includes the plugin source, bundled Razorpay SDK and syntax-check workflow. See [contributing](CONTRIBUTING.md) for bug reports and changes, and [security reporting](SECURITY.md) for sensitive findings.
 
-Known limitation: subscription support is not included in this version.
-
-## Repository and distribution status
-
-This is a local GitHub source candidate, not a tagged release. Original source files are kept intact. The project code currently has **no explicit redistribution license** selected, pending an ownership/licensing decision. Bundled third-party license files are retained; see [third-party information](docs/THIRD-PARTY.md).
-
-The syntax-check workflow is a starting point and is not evidence that payment processing is secure or functional.
+Third-party licenses are included with their dependencies. A license for the project's own code is still to be selected; see [third-party details](docs/THIRD-PARTY.md).
