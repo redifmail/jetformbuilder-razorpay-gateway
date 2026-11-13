@@ -38,17 +38,15 @@ Version 0.2.9 added the Razorpay details panel, bringing transaction information
 
 See the [changelog](CHANGELOG.md) for version history and [releases](https://github.com/redifmail/jetformbuilder-razorpay-gateway/releases) for tagged downloads.
 
-## Testing and issues being checked
+## Compatibility and known issues
 
-The maintainer reports successful live-payment testing. The documented development baseline is JetFormBuilder 3.6.4.1, with PHP 7.4+ declared by the plugin.
+Developed for JetFormBuilder 3.6.4.1 and PHP 7.4+. Live checkout has been tested.
 
-A separate code review identified a few edge cases to investigate:
+The following edge cases are under investigation:
 
 - Browser returns and webhooks arriving together may run paid actions more than once.
 - A browser failure callback may close a pending record before a later payment confirmation arrives.
 - Missing amount or currency values, and forms using different credential sets, need additional checks.
-
-These are code-review findings, not failures reported from the maintainer's live tests. The [test matrix](docs/TEST-MATRIX.md) tracks the scenarios to reproduce and verify.
 
 This version handles one-time payments. Recurring subscriptions are a possible future addition.
 
